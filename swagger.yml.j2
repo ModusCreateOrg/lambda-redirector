@@ -1,0 +1,49 @@
+---
+swagger: "2.0"
+info:
+  version: "2017-08-15T19:29:52Z"
+  title: "{{ title }}"
+# host: ""
+basePath: "{{ basePath }}"
+schemes:
+- "https"
+paths:
+  {{ paths }}:
+    get:
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        302:
+          description: "302 response"
+          headers:
+            Location:
+              type: "string"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "302"
+            responseParameters:
+              method.response.header.Location: "integration.response.body.location"
+        uri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:{{ REGION }}:{{ ACCOUNT_ID }}:function:get/invocations"
+        httpMethod: "POST"
+        type: "aws"
+    post:
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        302:
+          description: "302 response"
+          headers:
+            Location:
+              type: "string"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "302"
+            responseParameters:
+              method.response.header.Location: "integration.response.body.location"
+        uri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:{{ REGION }}:{{ ACCOUNT_ID }}:function:other/invocations"
+        httpMethod: "POST"
+        type: "aws"
