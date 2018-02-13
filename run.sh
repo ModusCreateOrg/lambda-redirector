@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
 
-###############################################################################
-# Date: January, 2018
-# Author: Housni Yakoob <housni.yakoob@gmail.com>
-###############################################################################
-
 # Less eager word splitting - no space.
 IFS=$'\n\t'
 
@@ -35,7 +30,7 @@ REGION=$(aws configure get region)
 # Vars used in YAML files, injected via Jinja2
 title="Redirector"
 basePath="/test"
-paths="/redirector-path"
+paths="/"
 StageName="test"
 NEW_GET_DOMAIN="https://get.com/"
 NEW_OTHER_DOMAIN="https://other.com/"
@@ -94,7 +89,7 @@ info() {
     REST_API_ID=$(aws cloudformation list-stack-resources --stack-name ${STACK_NAME} | grep -A1 'AWS::ApiGateway::RestApi' | grep 'PhysicalResourceId' | awk '{print $2}' | tr -d '"' | tr -d ",")
     REST_API_URL="https://${REST_API_ID}.execute-api.${REGION}.amazonaws.com/${StageName}"
 
-    echo "The redirect url is ${REST_API_URL}/${paths}"
+    echo "The redirect url is ${REST_API_URL}${paths}"
 }
 
 case "$VERB" in
@@ -115,3 +110,5 @@ case "$VERB" in
         info
     ;;
 esac
+
+exit 0

@@ -1,11 +1,11 @@
-// TODO: Fix IAM so API Gateway and Lambda are the only ones that need permissions.
-// See: https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html?icmpid=docs_iam_console
-
 'use strict';
 
-// Should handle GET requests.
 exports.handler = function(event, context) {
+    var resource_path = JSON.stringify(event.context["resource-path"]);
+    resource_path = resource_path.replace(/"/g, '');
+    resource_path = resource_path.substring(1);
+
     context.succeed({
-        location : process.env.NEW_GET_DOMAIN
+        location : process.env.NEW_GET_DOMAIN + resource_path
     });
 };
