@@ -16,11 +16,11 @@ set -o pipefail
 
 BASE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-VERB=${1:-}
+ACTION=${1:-}
+ARG2=${2:-Redirector}
 
 TEMPLATE_FILE_NAME='app_spec.yml'
 PACKAGE_FILE_NAME='packaged_spec.yml'
-STACK_NAME='Redirector'
 
 ACCOUNT_ID=$(aws iam get-user | grep 'arn:aws:iam' | cut -d ":" -f6)
 ACCOUNT_ALIAS=$(aws iam list-account-aliases --query 'AccountAliases' --output text)
@@ -32,7 +32,7 @@ title="Redirector"
 basePath="/test"
 paths="/"
 StageName="test"
-NEW_GET_DOMAIN="https://get.com/"
+NEW_GET_DOMAIN="https://facebook.com/"
 NEW_OTHER_DOMAIN="https://other.com/"
 
 echo "Targeting region $REGION in AWS Account $ACCOUNT_ALIAS ($ACCOUNT_ID)"
@@ -73,7 +73,7 @@ package() {
 
 # Try to deploy the package
 deploy() {
-    if aws cloudformation deploy --template-file ${PACKAGE_FILE_NAME} --stack-name ${STACK_NAME} --capabilities CAPABILITY_IAM; then
+    if aws cloudformation deploy --template-file ${PACKAGE_FILE_NAME} --stack-name ${ARG2} --capabilities CAPABILITY_IAM; then
         echo "CloudFormation successfully deployed the serverless app package"
     else
         echo "Failed deploying CloudFormation package"
@@ -82,26 +82,26 @@ deploy() {
 }
 
 delete() {
-    aws cloudformation delete-stack --stack-name ${STACK_NAME}
+    aws cloudformation delete-stack --stack-name ${ARG2}
 }
 
 info() {
-    REST_API_ID=$(aws cloudformation list-stack-resources --stack-name ${STACK_NAME} | grep -A1 'AWS::ApiGateway::RestApi' | grep 'PhysicalResourceId' | awk '{print $2}' | tr -d '"' | tr -d ",")
+    REST_API_ID=$(aws cloudformation list-stack-resources --stack-name ${ARG2} | grep -A1 'AWS::ApiGateway::RestApi' | grep 'PhysicalResourceId' | awk '{print $2}' | tr -d '"' | tr -d ",")
     REST_API_URL="https://${REST_API_ID}.execute-api.${REGION}.amazonaws.com/${StageName}"
 
     echo "The redirect url is ${REST_API_URL}${paths}"
 }
 
-case "$VERB" in
+case "$ACTION" in
     "validate"|"evaluate"|"prepare"|"package"|"deploy"|"info")
-        $VERB
+        $ACTION
     ;;
 
     "delete")
         delete
     ;;
 
-    *)
+    *|"all")
         evaluate
         validate
         prepare
