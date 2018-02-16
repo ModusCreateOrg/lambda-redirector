@@ -49,7 +49,7 @@ paths:
         responses:
           default:
             statusCode: "302"
-        uri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:{{ REGION }}:{{ ACCOUNT_ID }}:function:get/invocations"
+        uri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:{{ REGION }}:{{ ACCOUNT_ID }}:function:other/invocations"
         passthroughBehavior: "when_no_match"
         httpMethod: "POST"
         type: "aws_proxy"
@@ -93,7 +93,7 @@ paths:
             statusCode: "302"
             responseParameters:
               method.response.header.Location: "integration.response.body.location"
-        uri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:{{ REGION }}:{{ ACCOUNT_ID }}:function:get/invocations"
+        uri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:{{ REGION }}:{{ ACCOUNT_ID }}:function:other/invocations"
         httpMethod: "POST"
         passthroughBehavior: when_no_templates
         # See: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html
