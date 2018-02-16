@@ -73,7 +73,8 @@ package() {
 
 # Try to deploy the package
 deploy() {
-    if aws cloudformation deploy --template-file ${PACKAGE_FILE_NAME} --stack-name ${ARG2} --capabilities CAPABILITY_IAM; then
+    local stack="${1}"
+    if aws cloudformation deploy --template-file ${PACKAGE_FILE_NAME} --stack-name ${stack} --capabilities CAPABILITY_IAM; then
         echo "CloudFormation successfully deployed the serverless app package"
     else
         echo "Failed deploying CloudFormation package"
@@ -82,11 +83,13 @@ deploy() {
 }
 
 delete() {
-    aws cloudformation delete-stack --stack-name ${ARG2}
+    local stack="${1}"
+    aws cloudformation delete-stack --stack-name ${stack}
 }
 
 info() {
-    REST_API_ID=$(aws cloudformation list-stack-resources --stack-name ${ARG2} | grep -A1 'AWS::ApiGateway::RestApi' | grep 'PhysicalResourceId' | awk '{print $2}' | tr -d '"' | tr -d ",")
+    local stack="${1}"
+    REST_API_ID=$(aws cloudformation list-stack-resources --stack-name ${stack} | grep -A1 'AWS::ApiGateway::RestApi' | grep 'PhysicalResourceId' | awk '{print $2}' | tr -d '"' | tr -d ",")
     REST_API_URL="https://${REST_API_ID}.execute-api.${REGION}.amazonaws.com/${StageName}"
 
     echo "The redirect url is ${REST_API_URL}${paths}"
@@ -94,20 +97,30 @@ info() {
 
 case "$ACTION" in
     "validate"|"evaluate"|"prepare"|"package"|"deploy"|"info")
-        $ACTION
+        $ACTION "${ARG2}"
     ;;
 
     "delete")
-        delete
+        delete "${ARG2}"
     ;;
 
-    *|"all")
-        evaluate
-        validate
-        prepare
-        package
-        deploy
-        info
+    "test")
+        tester "${ARG2}"
+    ;;
+
+    "")
+        evaluate "${ARG2}"
+        validate "${ARG2}"
+        prepare "${ARG2}"
+        package "${ARG2}"
+        deploy "${ARG2}"
+        info "${ARG2}"
+    ;;
+
+    *)
+        echo "Unknown action '$ACTION'."
+        echo "Terminating."
+        exit 1
     ;;
 esac
 
