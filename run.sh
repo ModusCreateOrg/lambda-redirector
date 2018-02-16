@@ -32,8 +32,12 @@ title="Redirector"
 basePath="/test"
 paths="/"
 StageName="test"
+# Domain to redirect to for GET requests
 NEW_GET_DOMAIN="https://facebook.com/"
+# Domain to redirect to for all other requests
 NEW_OTHER_DOMAIN="https://other.com/"
+# Host to listen to.
+host="http://moduscreate.com/"
 
 echo "Targeting region $REGION in AWS Account $ACCOUNT_ALIAS ($ACCOUNT_ID)"
 
@@ -44,6 +48,7 @@ evaluate() {
             -D basePath="$basePath" \
             -D paths="$paths" \
             -D StageName="$StageName" \
+            -D host="$host" \
             -D NEW_GET_DOMAIN="$NEW_GET_DOMAIN" \
             -D NEW_OTHER_DOMAIN="$NEW_OTHER_DOMAIN" \
             -D REGION="$REGION" \
