@@ -2,9 +2,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Parameters:
-  Host:
-    Type: String
-    Description: "Host to listen to for incoming requests."
   StageName:
     Type: String
     Description: "Name of the stage. Caveat: https://github.com/awslabs/serverless-application-model/issues/191"
@@ -41,15 +38,15 @@ Resources:
         Variables:
           NEW_DOMAIN:
             Ref: NewDomain
-  OtherFunction:
+  AnyFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: redirector.other
+      Handler: redirector.any
       Runtime: nodejs6.10
       Policies: AWSLambdaBasicExecutionRole
-      FunctionName: !Join ['-', ['other', !Ref 'AWS::StackName']]
+      FunctionName: !Join ['-', ['any', !Ref 'AWS::StackName']]
       Tags: 
-        AppNameTag: OtherHandler
+        AppNameTag: AnyHandler
       Environment:
         Variables:
           NEW_DOMAIN:
@@ -62,11 +59,11 @@ Resources:
       Action: lambda:InvokeFunction
       FunctionName: !Ref GetFunction
       Principal: apigateway.amazonaws.com
-  LambdaOtherPermission:
+  LambdaAnyPermission:
     Type: "AWS::Lambda::Permission"
     DependsOn:
-    - OtherFunction
+    - AnyFunction
     Properties:
       Action: lambda:InvokeFunction
-      FunctionName: !Ref OtherFunction
+      FunctionName: !Ref AnyFunction
       Principal: apigateway.amazonaws.com

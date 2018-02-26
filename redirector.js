@@ -26,8 +26,8 @@ module.exports.get = (event, context, callback) => {
     callback(null, response);
 };
 
-// Handles POST requests.
-module.exports.other = (event, context, callback) => {
+// Handles everything except GET requests.
+module.exports.any = (event, context, callback) => {
     // Prevent crashing due to uncallable callbacks.
     // See: http://justbuildsomething.com/node-js-best-practices/#5
     callback = (typeof callback === 'function') ? callback : function() {};
