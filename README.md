@@ -3,14 +3,14 @@ Redirect an entire website using [AWS Lambda](https://aws.amazon.com/lambda/) an
 
 # Table of Contents
  - [About](#about)
-   - [The Problem](#theproblem)
-   - [The Solution](#thesolution)
+   - [The Problem](#the-problem)
+   - [The Solution](#the-solution)
  - [Usage](#usage)
-   - [Setting Up](#settingup)
+   - [Setting Up](#setting-up)
    - [Package](#package)
    - [Deploy](#deploy)
      - [Parameters](#parameters)
-   - [Deleting a Stack](#deletingastack)
+   - [Deleting a Stack](#deleting-a-stack)
  - [Contributing](#contributing)
  - [Legal](#legal)
 
