@@ -1,0 +1,72 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Parameters:
+  Host:
+    Type: String
+    Description: "Host to listen to for incoming requests."
+  StageName:
+    Type: String
+    Description: "Name of the stage. Caveat: https://github.com/awslabs/serverless-application-model/issues/191"
+  NewDomain:
+    Type: String
+    Description: "New domain to redirect to."
+  SwaggerFileBucket:
+    Type: String
+    Description: "Name of the S3 bucket holds the Swagger file defined in 'SwaggerFileName'. Eg: 'My-S3-Bucket'."
+  SwaggerFileName:
+    Type: String
+    Description: "The file name of the swagger file. Eg: 'swagger.yml'."
+Resources:
+  Listener:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName:
+        Ref: StageName
+      DefinitionBody:
+          'Fn::Transform':
+            Name: 'AWS::Include'
+            Parameters:
+              Location: !Join ['/', ['s3:/', !Ref SwaggerFileBucket, !Ref SwaggerFileName]]
+  GetFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: redirector.get
+      Runtime: nodejs6.10
+      Policies: AWSLambdaBasicExecutionRole
+      FunctionName: !Join ['-', ['get', !Ref 'AWS::StackName']]
+      Tags: 
+        AppNameTag: GetHandler
+      Environment:
+        Variables:
+          NEW_DOMAIN:
+            Ref: NewDomain
+  OtherFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: redirector.other
+      Runtime: nodejs6.10
+      Policies: AWSLambdaBasicExecutionRole
+      FunctionName: !Join ['-', ['other', !Ref 'AWS::StackName']]
+      Tags: 
+        AppNameTag: OtherHandler
+      Environment:
+        Variables:
+          NEW_DOMAIN:
+            Ref: NewDomain
+  LambdaGetPermission:
+    Type: "AWS::Lambda::Permission"
+    DependsOn:
+    - GetFunction
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref GetFunction
+      Principal: apigateway.amazonaws.com
+  LambdaOtherPermission:
+    Type: "AWS::Lambda::Permission"
+    DependsOn:
+    - OtherFunction
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref OtherFunction
+      Principal: apigateway.amazonaws.com
