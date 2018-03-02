@@ -2,12 +2,17 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Parameters:
-  StageName:
-    Type: String
-    Description: "Name of the stage. Caveat: https://github.com/awslabs/serverless-application-model/issues/191"
+  HTTPResponse:
+    Type: Number
+    Default: 302
+    AllowedValues: [301, 302]
+    Description: ""
   NewDomain:
     Type: String
     Description: "New domain to redirect to."
+  StageName:
+    Type: String
+    Description: "Name of the stage. Caveat: https://github.com/awslabs/serverless-application-model/issues/191"
   SwaggerFileBucket:
     Type: String
     Description: "Name of the S3 bucket holds the Swagger file defined in 'SwaggerFileName'. Eg: 'My-S3-Bucket'."
@@ -36,8 +41,8 @@ Resources:
         AppNameTag: GetHandler
       Environment:
         Variables:
-          NEW_DOMAIN:
-            Ref: NewDomain
+          NEW_DOMAIN: !Ref NewDomain
+          HTTP_RESPONSE: !Ref HTTPResponse
   AnyFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -49,8 +54,8 @@ Resources:
         AppNameTag: AnyHandler
       Environment:
         Variables:
-          NEW_DOMAIN:
-            Ref: NewDomain
+          NEW_DOMAIN: !Ref NewDomain
+          HTTP_RESPONSE: !Ref HTTPResponse
   LambdaGetPermission:
     Type: "AWS::Lambda::Permission"
     DependsOn:

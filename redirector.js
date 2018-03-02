@@ -92,7 +92,7 @@ function assembleRequest(path, query) {
 function assembleResponse(event, requestUri) {
     if (isProxy(event)) {
         return {
-            "statusCode": 302,
+            "statusCode": process.env.HTTP_RESPONSE,
             "headers": {
                 "Location": process.env.NEW_DOMAIN + requestUri
             },
@@ -100,5 +100,8 @@ function assembleResponse(event, requestUri) {
             "isBase64Encoded": false
         };
     }
-    return { location : process.env.NEW_DOMAIN + requestUri };
+    return {
+        status: process.env.HTTP_RESPONSE,
+        location : process.env.NEW_DOMAIN + requestUri
+    };
 }

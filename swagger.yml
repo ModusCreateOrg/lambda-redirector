@@ -1,7 +1,8 @@
 ---
+# See: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md
 swagger: "2.0"
 info:
-  version: "2017-08-15T19:29:52Z"
+  version: "2018-03-02T20:29:52Z"
   title: "Lambda Redirector"
 basePath: "/"
 schemes:
@@ -17,8 +18,14 @@ paths:
         required: true
         type: "string"
       responses:
+        # Available HTTP statuses
+        301:
+          description: "301 Moved Permanently"
+          headers:
+            Location:
+              type: "string"
         302:
-          description: "302 response"
+          description: "302 Found"
           headers:
             Location:
               type: "string"
@@ -40,8 +47,13 @@ paths:
         required: true
         type: "string"
       responses:
+        301:
+          description: "301 Moved Permanently"
+          headers:
+            Location:
+              type: "string"
         302:
-          description: "302 response"
+          description: "302 Found"
           headers:
             Location:
               type: "string"
@@ -60,17 +72,32 @@ paths:
       - "application/json"
       parameters: []
       responses:
-        302:
-          description: "302 response"
+        301:
+          description: "301 Moved Permanently"
           headers:
             Location:
               type: "string"
+            Status:
+              type: "integer"
+        302:
+          description: "302 Found"
+          headers:
+            Location:
+              type: "string"
+            Status:
+              type: "integer"
       x-amazon-apigateway-integration:
         responses:
           default:
             statusCode: "302"
             responseParameters:
               method.response.header.Location: "integration.response.body.location"
+              method.response.header.Status: "integration.response.body.status"
+          301:
+            statusCode: "301"
+            responseParameters:
+              method.response.header.Location: "integration.response.body.location"
+              method.response.header.Status: "integration.response.body.status"
         uri:
           Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetFunction.Arn}/invocations"
         httpMethod: "POST"
@@ -84,17 +111,32 @@ paths:
       - "application/json"
       parameters: []
       responses:
-        302:
-          description: "302 response"
+        301:
+          description: "301 Moved Permanently"
           headers:
             Location:
               type: "string"
+            Status:
+              type: "integer"
+        302:
+          description: "302 Found"
+          headers:
+            Location:
+              type: "string"
+            Status:
+              type: "integer"
       x-amazon-apigateway-integration:
         responses:
-          default:
+          302:
             statusCode: "302"
             responseParameters:
               method.response.header.Location: "integration.response.body.location"
+              method.response.header.Status: "integration.response.body.status"
+          301:
+            statusCode: "301"
+            responseParameters:
+              method.response.header.Location: "integration.response.body.location"
+              method.response.header.Status: "integration.response.body.status"
         uri:
           Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${AnyFunction.Arn}/invocations"
         httpMethod: "POST"
