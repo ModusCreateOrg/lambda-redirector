@@ -77,14 +77,14 @@ paths:
           headers:
             Location:
               type: "string"
-            Status:
+            status:
               type: "integer"
         302:
           description: "302 Found"
           headers:
             Location:
               type: "string"
-            Status:
+            status:
               type: "integer"
       x-amazon-apigateway-integration:
         responses:
@@ -92,12 +92,12 @@ paths:
             statusCode: "302"
             responseParameters:
               method.response.header.Location: "integration.response.body.location"
-              method.response.header.Status: "integration.response.body.status"
+              method.response.header.status: "integration.response.body.status"
           301:
             statusCode: "301"
             responseParameters:
               method.response.header.Location: "integration.response.body.location"
-              method.response.header.Status: "integration.response.body.status"
+              method.response.header.status: "integration.response.body.status"
         uri:
           Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetFunction.Arn}/invocations"
         httpMethod: "POST"
@@ -116,14 +116,14 @@ paths:
           headers:
             Location:
               type: "string"
-            Status:
+            status:
               type: "integer"
         302:
           description: "302 Found"
           headers:
             Location:
               type: "string"
-            Status:
+            status:
               type: "integer"
       x-amazon-apigateway-integration:
         responses:
@@ -131,12 +131,12 @@ paths:
             statusCode: "302"
             responseParameters:
               method.response.header.Location: "integration.response.body.location"
-              method.response.header.Status: "integration.response.body.status"
+              method.response.header.status: "integration.response.body.status"
           301:
             statusCode: "301"
             responseParameters:
               method.response.header.Location: "integration.response.body.location"
-              method.response.header.Status: "integration.response.body.status"
+              method.response.header.status: "integration.response.body.status"
         uri:
           Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${AnyFunction.Arn}/invocations"
         httpMethod: "POST"
