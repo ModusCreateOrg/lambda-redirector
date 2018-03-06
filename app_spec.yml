@@ -6,7 +6,7 @@ Parameters:
     Type: Number
     Default: 302
     AllowedValues: [301, 302]
-    Description: ""
+    Description: "The HTTP response status code."
   NewDomain:
     Type: String
     Description: "New domain to redirect to."
@@ -15,7 +15,7 @@ Parameters:
     Description: "Name of the stage. Caveat: https://github.com/awslabs/serverless-application-model/issues/191"
   SwaggerFileBucket:
     Type: String
-    Description: "Name of the S3 bucket holds the Swagger file defined in 'SwaggerFileName'. Eg: 'My-S3-Bucket'."
+    Description: "Name of the S3 bucket holds the Swagger file defined in 'SwaggerFileName'. Eg: 'MyS3Bucket'."
   SwaggerFileName:
     Type: String
     Description: "The file name of the swagger file. Eg: 'swagger.yml'."
@@ -26,6 +26,7 @@ Resources:
       StageName:
         Ref: StageName
       DefinitionBody:
+          # See: https://thomasvachon.com/articles/making-modular-cloudformation-with-includes/
           'Fn::Transform':
             Name: 'AWS::Include'
             Parameters:
