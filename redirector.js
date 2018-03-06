@@ -11,17 +11,9 @@ module.exports.get = (event, context, callback) => {
     // See: http://justbuildsomething.com/node-js-best-practices/#5
     callback = (typeof callback === 'function') ? callback : function() {};
 
-    if (isProxy(event)) {
-        var path = event.path.substring(1);
-        var queries = event.queryStringParameters;
-    } else {
-        var path = "";
-        var queries = event.params.querystring;
-    }
-
-    var query = assembleQuery(queries);
-    var requestUri = assembleRequest(path, query);
-    var response = assembleResponse(event, requestUri);
+    var query = assembleQuery(event.queryStringParameters);
+    var requestUri = assembleRequest(event.path, query);
+    var response = assembleResponse(requestUri);
 
     callback(null, response);
 };
@@ -32,35 +24,12 @@ module.exports.any = (event, context, callback) => {
     // See: http://justbuildsomething.com/node-js-best-practices/#5
     callback = (typeof callback === 'function') ? callback : function() {};
 
-    if (isProxy(event)) {
-        var path = event.path.substring(1);
-        var queries = event.queryStringParameters;
-    } else {
-        var path = "";
-        var queries = event.params.querystring;
-    }
-
-    var query = assembleQuery(queries);
-    var requestUri = assembleRequest(path, query);
-    var response = assembleResponse(event, requestUri);
+    var query = assembleQuery(event.queryStringParameters);
+    var requestUri = assembleRequest(event.path, query);
+    var response = assembleResponse(requestUri);
 
     callback(null, response);
 };
-
-/**
- * Determines if the incoming request is a proxy integration or not.
- *
- * See: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
- * See: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-create-api-as-simple-proxy-for-lambda.html
- */
-function isProxy(event) {
-    if (typeof event.path == "undefined") {
-        // Non proxy
-        return false;
-    }
-    // Proxy
-    return true;
-}
 
 /**
  * Assembles query parameters.
@@ -68,9 +37,7 @@ function isProxy(event) {
 function assembleQuery(queries) {
     var query = [];
     for (var property in queries) {
-        if(queries.hasOwnProperty(property)) {
-            query.push(property + "=" + queries[property]);
-        }
+        query.push(property + "=" + queries[property]);
     }
     return query.join('&');
 }
@@ -87,18 +54,14 @@ function assembleRequest(path, query) {
 }
 
 /**
- * Assembles response based on the integration (proxy or non-proxy).
+ * Assemble the response to send to API Gateway.
  */
-function assembleResponse(event, requestUri) {
-    if (isProxy(event)) {
-        return {
-            "statusCode": 302,
-            "headers": {
-                "Location": process.env.NEW_DOMAIN + requestUri
-            },
-            "body": "",
-            "isBase64Encoded": false
-        };
+function assembleResponse(requestUri) {
+    return {
+        statusCode: process.env.HTTP_RESPONSE,
+        headers: {
+            "Location": process.env.NEW_DOMAIN + requestUri
+        },
+        body: null
     }
-    return { location : process.env.NEW_DOMAIN + requestUri };
 }

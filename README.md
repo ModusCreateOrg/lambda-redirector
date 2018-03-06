@@ -75,14 +75,16 @@ aws cloudformation deploy \
         StageName=Staging \
         NewDomain=http://example.org/ \
         SwaggerFileBucket=MyRedirectorBucket \
-        SwaggerFileName=swagger.yml
+        SwaggerFileName=swagger.yml \
+        HTTPResponse=301
 ```
 
 #### Parameters
 Parameters | Type | Description
 ---|:---:|---
-StageName | `String` | Name of the [Stage](https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-stages.html). Caveat: https://github.com/awslabs/serverless-application-model/issues/191
+HTTPResponse | `Number` | The HTTP response to redirect with. Only `301` and `302` are allowed.
 NewDomain | `String` | New domain to redirect to.
+StageName | `String` | Name of the [Stage](https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-stages.html). Caveat: https://github.com/awslabs/serverless-application-model/issues/191
 SwaggerFileBucket | `String` | The bucket that the swagger file `SwaggerFileName` is uploaded to.
 SwaggerFileName | `String` | The file name of the swagger file. Eg: 'swagger.yml'.
 
