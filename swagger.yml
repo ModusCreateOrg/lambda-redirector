@@ -1,7 +1,7 @@
 ---
-# See: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md
 swagger: "2.0"
 info:
+  # TODO: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#info-object
   version: "2018-03-02T20:29:52Z"
   title: "Lambda Redirector"
 basePath: "/"
@@ -10,57 +10,14 @@ schemes:
 paths:
   /{proxy+}:
     get:
-      produces:
-      - "application/json"
-      parameters:
-      - name: "proxy"
-        in: "path"
-        required: true
-        type: "string"
-      responses:
-        # Available HTTP statuses
-        301:
-          description: "301 Moved Permanently"
-          headers:
-            Location:
-              type: "string"
-        302:
-          description: "302 Found"
-          headers:
-            Location:
-              type: "string"
       x-amazon-apigateway-integration:
-        responses:
-          default:
-            statusCode: "302"
         uri:
           Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetFunction.Arn}/invocations"
         passthroughBehavior: "when_no_match"
         httpMethod: "POST"
         type: "aws_proxy"
     x-amazon-apigateway-any-method:
-      produces:
-      - "application/json"
-      parameters:
-      - name: "proxy"
-        in: "path"
-        required: true
-        type: "string"
-      responses:
-        301:
-          description: "301 Moved Permanently"
-          headers:
-            Location:
-              type: "string"
-        302:
-          description: "302 Found"
-          headers:
-            Location:
-              type: "string"
       x-amazon-apigateway-integration:
-        responses:
-          default:
-            statusCode: "302"
         uri:
           Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${AnyFunction.Arn}/invocations"
         passthroughBehavior: "when_no_match"
@@ -68,80 +25,16 @@ paths:
         type: "aws_proxy"
   /:
     get:
-      produces:
-      - "application/json"
-      parameters: []
-      responses:
-        301:
-          description: "301 Moved Permanently"
-          headers:
-            Location:
-              type: "string"
-            status:
-              type: "integer"
-        302:
-          description: "302 Found"
-          headers:
-            Location:
-              type: "string"
-            status:
-              type: "integer"
       x-amazon-apigateway-integration:
-        responses:
-          default:
-            statusCode: "302"
-            responseParameters:
-              method.response.header.Location: "integration.response.body.location"
-              method.response.header.status: "integration.response.body.status"
-          301:
-            statusCode: "301"
-            responseParameters:
-              method.response.header.Location: "integration.response.body.location"
-              method.response.header.status: "integration.response.body.status"
         uri:
           Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetFunction.Arn}/invocations"
         httpMethod: "POST"
         passthroughBehavior: when_no_templates
-        # See: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html
-        requestTemplates:
-          application/json: "#set($allParams = $input.params())\n{\n\"body-json\" : $input.json('$'),\n\"params\" : {\n#foreach($type in $allParams.keySet())\n    #set($params = $allParams.get($type))\n\"$type\" : {\n    #foreach($paramName in $params.keySet())\n    \"$paramName\" : \"$util.escapeJavaScript($params.get($paramName))\"\n        #if($foreach.hasNext),#end\n    #end\n}\n    #if($foreach.hasNext),#end\n#end\n},\n\"stage-variables\" : {\n#foreach($key in $stageVariables.keySet())\n\"$key\" : \"$util.escapeJavaScript($stageVariables.get($key))\"\n    #if($foreach.hasNext),#end\n#end\n},\n\"context\" : {\n    \"account-id\" : \"$context.identity.accountId\",\n    \"api-id\" : \"$context.apiId\",\n    \"api-key\" : \"$context.identity.apiKey\",\n    \"authorizer-principal-id\" : \"$context.authorizer.principalId\",\n    \"caller\" : \"$context.identity.caller\",\n    \"cognito-authentication-provider\" : \"$context.identity.cognitoAuthenticationProvider\",\n    \"cognito-authentication-type\" : \"$context.identity.cognitoAuthenticationType\",\n    \"cognito-identity-id\" : \"$context.identity.cognitoIdentityId\",\n    \"cognito-identity-pool-id\" : \"$context.identity.cognitoIdentityPoolId\",\n    \"http-method\" : \"$context.httpMethod\",\n    \"stage\" : \"$context.stage\",\n    \"source-ip\" : \"$context.identity.sourceIp\",\n    \"user\" : \"$context.identity.user\",\n    \"user-agent\" : \"$context.identity.userAgent\",\n    \"user-arn\" : \"$context.identity.userArn\",\n    \"request-id\" : \"$context.requestId\",\n    \"resource-id\" : \"$context.resourceId\",\n    \"resource-path\" : \"$context.resourcePath\"\n    }\n}"
-        type: "aws"
+        type: "aws_proxy"
     x-amazon-apigateway-any-method:
-      produces:
-      - "application/json"
-      parameters: []
-      responses:
-        301:
-          description: "301 Moved Permanently"
-          headers:
-            Location:
-              type: "string"
-            status:
-              type: "integer"
-        302:
-          description: "302 Found"
-          headers:
-            Location:
-              type: "string"
-            status:
-              type: "integer"
       x-amazon-apigateway-integration:
-        responses:
-          302:
-            statusCode: "302"
-            responseParameters:
-              method.response.header.Location: "integration.response.body.location"
-              method.response.header.status: "integration.response.body.status"
-          301:
-            statusCode: "301"
-            responseParameters:
-              method.response.header.Location: "integration.response.body.location"
-              method.response.header.status: "integration.response.body.status"
         uri:
           Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${AnyFunction.Arn}/invocations"
         httpMethod: "POST"
         passthroughBehavior: when_no_templates
-        # See: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html
-        requestTemplates:
-          application/json: "#set($allParams = $input.params())\n{\n\"body-json\" : $input.json('$'),\n\"params\" : {\n#foreach($type in $allParams.keySet())\n    #set($params = $allParams.get($type))\n\"$type\" : {\n    #foreach($paramName in $params.keySet())\n    \"$paramName\" : \"$util.escapeJavaScript($params.get($paramName))\"\n        #if($foreach.hasNext),#end\n    #end\n}\n    #if($foreach.hasNext),#end\n#end\n},\n\"stage-variables\" : {\n#foreach($key in $stageVariables.keySet())\n\"$key\" : \"$util.escapeJavaScript($stageVariables.get($key))\"\n    #if($foreach.hasNext),#end\n#end\n},\n\"context\" : {\n    \"account-id\" : \"$context.identity.accountId\",\n    \"api-id\" : \"$context.apiId\",\n    \"api-key\" : \"$context.identity.apiKey\",\n    \"authorizer-principal-id\" : \"$context.authorizer.principalId\",\n    \"caller\" : \"$context.identity.caller\",\n    \"cognito-authentication-provider\" : \"$context.identity.cognitoAuthenticationProvider\",\n    \"cognito-authentication-type\" : \"$context.identity.cognitoAuthenticationType\",\n    \"cognito-identity-id\" : \"$context.identity.cognitoIdentityId\",\n    \"cognito-identity-pool-id\" : \"$context.identity.cognitoIdentityPoolId\",\n    \"http-method\" : \"$context.httpMethod\",\n    \"stage\" : \"$context.stage\",\n    \"source-ip\" : \"$context.identity.sourceIp\",\n    \"user\" : \"$context.identity.user\",\n    \"user-agent\" : \"$context.identity.userAgent\",\n    \"user-arn\" : \"$context.identity.userArn\",\n    \"request-id\" : \"$context.requestId\",\n    \"resource-id\" : \"$context.resourceId\",\n    \"resource-path\" : \"$context.resourcePath\"\n    }\n}"
-        type: "aws"
+        type: "aws_proxy"
