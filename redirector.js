@@ -2,7 +2,7 @@
 
 /**
  * Handles GET requests.
- * 
+ *
  * Can be altered to handle any request method as long as swagger.yml is
  * configured for those endpoints.
  */
@@ -18,7 +18,9 @@ module.exports.get = (event, context, callback) => {
     callback(null, response);
 };
 
-// Handles everything except GET requests.
+/**
+ * Handles everything except GET requests.
+ */
 module.exports.any = (event, context, callback) => {
     // Prevent crashing due to uncallable callbacks.
     // See: http://justbuildsomething.com/node-js-best-practices/#5
@@ -33,6 +35,9 @@ module.exports.any = (event, context, callback) => {
 
 /**
  * Assembles query parameters.
+ * 
+ * @param  {array}  queries The query string component from the request.
+ * @return {string}         The query string joined using `&`.
  */
 function assembleQuery(queries) {
     var query = [];
@@ -44,6 +49,10 @@ function assembleQuery(queries) {
 
 /**
  * Assembles request path.
+ * 
+ * @param  {string} path  The path component of the request.
+ * @param  {string} query The query string of the request.
+ * @return {string}       The path and the query joined using `?`.
  */
 function assembleRequest(path, query) {
     if (0 === Object.keys(query).length) {
@@ -55,6 +64,10 @@ function assembleRequest(path, query) {
 
 /**
  * Assemble the response to send to API Gateway.
+ * 
+ * @param  {string} requestUri The path and the query joined using `?`.
+ * @return {json}              The response sent to API Gateway via the Lambda proxy integration.
+ *                             See: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-simple-proxy-for-lambda-output-format
  */
 function assembleResponse(requestUri) {
     return {
