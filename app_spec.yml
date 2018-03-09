@@ -26,20 +26,17 @@ Resources:
       StageName:
         Ref: StageName
       DefinitionBody:
-          # See: https://thomasvachon.com/articles/making-modular-cloudformation-with-includes/
           'Fn::Transform':
             Name: 'AWS::Include'
             Parameters:
-              Location: !Join ['/', ['s3:/', !Ref SwaggerFileBucket, !Ref SwaggerFileName]]
+              Location: !Join ['', ['s3://', !Join ['/', [!Ref SwaggerFileBucket, !Ref SwaggerFileName]]]]
   GetFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: redirector.get
+      Handler: get.handler
       Runtime: nodejs6.10
       Policies: AWSLambdaBasicExecutionRole
       FunctionName: !Join ['-', ['get', !Ref 'AWS::StackName']]
-      Tags: 
-        AppNameTag: GetHandler
       Environment:
         Variables:
           NEW_DOMAIN: !Ref NewDomain
@@ -47,12 +44,10 @@ Resources:
   AnyFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: redirector.any
+      Handler: any.handler
       Runtime: nodejs6.10
       Policies: AWSLambdaBasicExecutionRole
       FunctionName: !Join ['-', ['any', !Ref 'AWS::StackName']]
-      Tags: 
-        AppNameTag: AnyHandler
       Environment:
         Variables:
           NEW_DOMAIN: !Ref NewDomain

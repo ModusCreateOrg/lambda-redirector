@@ -73,7 +73,7 @@ aws cloudformation deploy \
     --capabilities CAPABILITY_IAM \
     --parameter-overrides \
         StageName=Staging \
-        NewDomain=http://example.org/ \
+        NewDomain=http://example.org \
         SwaggerFileBucket=MyRedirectorBucket \
         SwaggerFileName=swagger.yml \
         HTTPResponse=301
