@@ -1,12 +1,10 @@
 ---
 swagger: "2.0"
 info:
-  # TODO: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#info-object
-  version: "2018-03-02T20:29:52Z"
   title: "Lambda Redirector"
+  description: Redirects requests to a new domain using Lambda.
+  version: "1.0"
 basePath: "/"
-schemes:
-- "https"
 paths:
   /{proxy+}:
     get:
@@ -28,13 +26,13 @@ paths:
       x-amazon-apigateway-integration:
         uri:
           Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetFunction.Arn}/invocations"
+        passthroughBehavior: "when_no_match"
         httpMethod: "POST"
-        passthroughBehavior: when_no_templates
         type: "aws_proxy"
     x-amazon-apigateway-any-method:
       x-amazon-apigateway-integration:
         uri:
           Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${AnyFunction.Arn}/invocations"
+        passthroughBehavior: "when_no_match"
         httpMethod: "POST"
-        passthroughBehavior: when_no_templates
         type: "aws_proxy"
