@@ -10,50 +10,53 @@ Parameters:
   NewDomain:
     Type: String
     Description: "New domain to redirect to."
-  StageName:
-    Type: String
-    Description: "Name of the stage. Caveat: https://github.com/awslabs/serverless-application-model/issues/191"
-  SwaggerFileBucket:
-    Type: String
-    Description: "Name of the S3 bucket holds the Swagger file defined in 'SwaggerFileName'. Eg: 'MyS3Bucket'."
-  SwaggerFileName:
-    Type: String
-    Description: "The file name of the swagger file. Eg: 'swagger.yml'."
 Resources:
-  Listener:
-    Type: AWS::Serverless::Api
-    Properties:
-      StageName:
-        Ref: StageName
-      DefinitionBody:
-          'Fn::Transform':
-            Name: 'AWS::Include'
-            Parameters:
-              Location: !Join ['', ['s3://', !Join ['/', [!Ref SwaggerFileBucket, !Ref SwaggerFileName]]]]
   GetFunction:
     Type: AWS::Serverless::Function
     Properties:
+      Description: "Handles GET requests."
       Handler: get.handler
       Runtime: nodejs6.10
       Policies: AWSLambdaBasicExecutionRole
-      FunctionName: !Join ['-', ['get', !Ref 'AWS::StackName']]
       Environment:
         Variables:
           NEW_DOMAIN: !Ref NewDomain
           HTTP_RESPONSE: !Ref HTTPResponse
+      Events:
+        GetProxy:
+          Type: Api
+          Properties:
+            Path: /{proxy+}
+            Method: get
+        GetCustom:
+          Type: Api
+          Properties:
+            Path: /
+            Method: get
   AnyFunction:
     Type: AWS::Serverless::Function
     Properties:
+      Description: "Handles everything except GET requests."
       Handler: any.handler
       Runtime: nodejs6.10
       Policies: AWSLambdaBasicExecutionRole
-      FunctionName: !Join ['-', ['any', !Ref 'AWS::StackName']]
       Environment:
         Variables:
           NEW_DOMAIN: !Ref NewDomain
           HTTP_RESPONSE: !Ref HTTPResponse
+      Events:
+        AnyProxy:
+          Type: Api
+          Properties:
+            Path: /{proxy+}
+            Method: any
+        AnyCustom:
+          Type: Api
+          Properties:
+            Path: /
+            Method: any
   LambdaGetPermission:
-    Type: "AWS::Lambda::Permission"
+    Type: AWS::Lambda::Permission
     DependsOn:
     - GetFunction
     Properties:
@@ -61,7 +64,7 @@ Resources:
       FunctionName: !Ref GetFunction
       Principal: apigateway.amazonaws.com
   LambdaAnyPermission:
-    Type: "AWS::Lambda::Permission"
+    Type: AWS::Lambda::Permission
     DependsOn:
     - AnyFunction
     Properties:
