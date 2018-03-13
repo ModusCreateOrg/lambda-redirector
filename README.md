@@ -1,5 +1,5 @@
 # Lambda Redirector
-Redirect an entire website using [AWS Lambda](https://aws.amazon.com/lambda/) and [API Gateway](https://aws.amazon.com/api-gateway/), packaged with [CloudFormation](https://aws.amazon.com/cloudformation/).
+Redirect an entire website using [AWS Lambda](https://aws.amazon.com/lambda/) and [API Gateway](https://aws.amazon.com/api-gateway/), packaged with [CloudFormation](https://aws.amazon.com/cloudformation/) and deployed with [Serverless Application Model (SAM)](https://aws.amazon.com/about-aws/whats-new/2016/11/introducing-the-aws-serverless-application-model/).
 
 # Table of Contents
  - [About](#about)
@@ -11,6 +11,7 @@ Redirect an entire website using [AWS Lambda](https://aws.amazon.com/lambda/) an
    - [Deploy](#deploy)
      - [Parameters](#parameters)
    - [Deleting a Stack](#deleting-a-stack)
+ - [Caveat](#caveat)
  - [Contributing](#contributing)
  - [Legal](#legal)
 
@@ -25,17 +26,13 @@ This works fine except you have to run a whole webserver just to manage this.
 ### The Solution
 We could use API Gateway as an entrypoint for requests and map those requests to our Lambda function. This way, we utilize a resource only when it's needed. Lambda is ideal for this use case since this is not a long lived process and it's also very specialized and the behaviour well defined.
 
-We've used CloudFormation to define our resources. However, we've split up our API Gateway definition into a separate file called `swagger.yml`.
+We've used CloudFormation to define our Lambda functions and in the function definition, we've specified that requests coming into API Gateway would act as a trigger for our Lambda functions. We've also specified that GET requests are handled by one function and all other HTTP methods are handled by another.
 
-The behaviour defined is:
- - API Gateway is defined in swagger.yml and it listens to every request.
- - Based on an HTTP method (i.e., GET, POST, PUT, etc.), we can configure API Gateway to route the request to a handler in a Lambda function.
- - Using Swagger, again, we can instruct API Gateway to pass on request parameters to the Lambda function using [Request Templates](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html). In our case, this makes the request parameters available via `event`, in Lambda.
- - In Lambda, we can then decide on how we redirect the user.
+Finally, we use AWS SAM to package and deploy our code.
 
 ## Usage
 Assumptions:
- - **MyRedirectorBucket** is the name of the bucket we'll be uploading our swagger definition and packaged Lambda code to.
+ - **MyRedirectorBucket** is the name of the bucket we'll be uploading our packaged Lambda code to.
  - **Redirector** is the name of our CloudFormation stack.
  - **http://example.org/** is the new domain we are redirecting to.
 
@@ -43,11 +40,6 @@ Assumptions:
 Make sure our S3 bucket exists, if not, create it
 ```
 aws s3 ls s3://MyRedirectorBucket/ > /dev/null 2>&1 || aws s3 mb s3://MyRedirectorBucket
-```
-
-Upload our Swagger file to the bucket so that CloudFormation can grab it
-```
-aws s3 cp ./swagger.yml s3://MyRedirectorBucket/swagger.yml
 ```
 
 Validate our CloudFormation template to make sure there are no errors
@@ -72,10 +64,7 @@ aws cloudformation deploy \
     --stack-name Redirector \
     --capabilities CAPABILITY_IAM \
     --parameter-overrides \
-        StageName=Staging \
         NewDomain=http://example.org \
-        SwaggerFileBucket=MyRedirectorBucket \
-        SwaggerFileName=swagger.yml \
         HTTPResponse=301
 ```
 
@@ -84,15 +73,15 @@ Parameters | Type | Description
 ---|:---:|---
 HTTPResponse | `Number` | The HTTP response to redirect with. Only `301` and `302` are allowed.
 NewDomain | `String` | New domain to redirect to.
-StageName | `String` | Name of the [Stage](https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-stages.html). Caveat: https://github.com/awslabs/serverless-application-model/issues/191
-SwaggerFileBucket | `String` | The bucket that the swagger file `SwaggerFileName` is uploaded to.
-SwaggerFileName | `String` | The file name of the swagger file. Eg: 'swagger.yml'.
 
 ### Deleting a Stack
 While testing, you may need to delete a stack
 ```
 aws cloudformation delete-stack --stack-name Redirector
 ```
+
+## Caveat:
+Since we are using AWS SAM, we are going to run into [bug #191](https://github.com/awslabs/serverless-application-model/issues/191). If you look at the Stages in your API Gateway, you're going to see some additional stages. Hopefully this bug is fixed soon.
 
 ## Contributing:
 See: http://www.contribution-guide.org/
