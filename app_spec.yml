@@ -17,6 +17,7 @@ Resources:
       Description: "Handles GET requests."
       Handler: get.handler
       Runtime: nodejs6.10
+      CodeUri: ./lambda
       Policies: AWSLambdaBasicExecutionRole
       Environment:
         Variables:
@@ -39,6 +40,7 @@ Resources:
       Description: "Handles everything except GET requests."
       Handler: any.handler
       Runtime: nodejs6.10
+      CodeUri: ./lambda
       Policies: AWSLambdaBasicExecutionRole
       Environment:
         Variables:
