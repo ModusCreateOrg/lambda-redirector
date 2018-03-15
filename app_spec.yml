@@ -18,7 +18,6 @@ Resources:
       Handler: get.handler
       Runtime: nodejs6.10
       CodeUri: ./lambda
-      Policies: AWSLambdaBasicExecutionRole
       Environment:
         Variables:
           NEW_DOMAIN: !Ref NewDomain
@@ -41,7 +40,6 @@ Resources:
       Handler: any.handler
       Runtime: nodejs6.10
       CodeUri: ./lambda
-      Policies: AWSLambdaBasicExecutionRole
       Environment:
         Variables:
           NEW_DOMAIN: !Ref NewDomain
@@ -57,19 +55,3 @@ Resources:
           Properties:
             Path: /
             Method: any
-  LambdaGetPermission:
-    Type: AWS::Lambda::Permission
-    DependsOn:
-    - GetFunction
-    Properties:
-      Action: lambda:InvokeFunction
-      FunctionName: !Ref GetFunction
-      Principal: apigateway.amazonaws.com
-  LambdaAnyPermission:
-    Type: AWS::Lambda::Permission
-    DependsOn:
-    - AnyFunction
-    Properties:
-      Action: lambda:InvokeFunction
-      FunctionName: !Ref AnyFunction
-      Principal: apigateway.amazonaws.com
