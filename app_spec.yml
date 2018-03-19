@@ -17,7 +17,7 @@ Resources:
       Description: "Handles GET requests."
       Handler: get.handler
       Runtime: nodejs6.10
-      Policies: AWSLambdaBasicExecutionRole
+      CodeUri: ./lambda
       Environment:
         Variables:
           NEW_DOMAIN: !Ref NewDomain
@@ -39,7 +39,7 @@ Resources:
       Description: "Handles everything except GET requests."
       Handler: any.handler
       Runtime: nodejs6.10
-      Policies: AWSLambdaBasicExecutionRole
+      CodeUri: ./lambda
       Environment:
         Variables:
           NEW_DOMAIN: !Ref NewDomain
@@ -55,19 +55,3 @@ Resources:
           Properties:
             Path: /
             Method: any
-  LambdaGetPermission:
-    Type: AWS::Lambda::Permission
-    DependsOn:
-    - GetFunction
-    Properties:
-      Action: lambda:InvokeFunction
-      FunctionName: !Ref GetFunction
-      Principal: apigateway.amazonaws.com
-  LambdaAnyPermission:
-    Type: AWS::Lambda::Permission
-    DependsOn:
-    - AnyFunction
-    Properties:
-      Action: lambda:InvokeFunction
-      FunctionName: !Ref AnyFunction
-      Principal: apigateway.amazonaws.com

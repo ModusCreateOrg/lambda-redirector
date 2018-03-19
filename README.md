@@ -82,7 +82,7 @@ aws cloudformation delete-stack --stack-name Redirector
 ```
 
 # Caveat:
-Since we are using AWS SAM, we are going to run into [bug #191](https://github.com/awslabs/serverless-application-model/issues/191). If you look at the Stages in your API Gateway, you're going to see some additional stages. Hopefully this bug is fixed soon.
+Since we are using AWS SAM, we are going to run into [bug #191](https://github.com/awslabs/serverless-application-model/issues/191). If you look at the Stages in your API Gateway, you're going to see a stage named `Stage`. Hopefully this bug is fixed soon.
 
 # Contributing:
 See: http://www.contribution-guide.org/

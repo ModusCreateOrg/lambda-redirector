@@ -4,9 +4,6 @@ var helper = require('lambda-redirector-helpers');
 
 /**
  * Handles GET requests.
- *
- * Can be altered to handle any request method as long as swagger.yml is
- * configured for those endpoints.
  */
 module.exports.handler = (event, context, callback) => {
     // Prevent crashing due to uncallable callbacks.
