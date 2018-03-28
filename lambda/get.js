@@ -1,6 +1,6 @@
 'use strict';
 
-var helper = require('lambda-redirector-helpers');
+var helper = require('./lib/helper');
 
 /**
  * Handles GET requests.
