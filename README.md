@@ -1,4 +1,6 @@
 # Lambda Redirector
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FModusCreateOrg%2Flambda-redirector.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FModusCreateOrg%2Flambda-redirector?ref=badge_shield)
+
 Redirect an entire website using [AWS Lambda](https://aws.amazon.com/lambda/) and [API Gateway](https://aws.amazon.com/api-gateway/), packaged with [CloudFormation](https://aws.amazon.com/cloudformation/) and deployed with [Serverless Application Model (SAM)](https://aws.amazon.com/about-aws/whats-new/2016/11/introducing-the-aws-serverless-application-model/).
 
 # Table of Contents
@@ -91,3 +93,7 @@ See: http://www.contribution-guide.org/
 Copyright 2018 by Modus Create, Inc. 
 
 This software is licensed under the permissive [MIT License](LICENSE.md).
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FModusCreateOrg%2Flambda-redirector.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FModusCreateOrg%2Flambda-redirector?ref=badge_large)
