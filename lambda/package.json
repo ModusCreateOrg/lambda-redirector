@@ -1,0 +1,28 @@
+{
+  "name": "lambda-redirector",
+  "version": "1.0.0",
+  "description": "AWS Lambda redirector",
+  "main": "lib/helper.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ModusCreateOrg/lambda-redirector.git"
+  },
+  "keywords": [
+    "aws",
+    "lambda",
+    "http",
+    "redirect"
+  ],
+  "author": "Modus Create, Inc.",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ModusCreateOrg/lambda-redirector/issues"
+  },
+  "homepage": "https://github.com/ModusCreateOrg/lambda-redirector#readme"
+}

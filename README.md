@@ -69,6 +69,8 @@ aws cloudformation deploy \
         HTTPResponse=301
 ```
 
+*Note*: Ensure that NewDomain is prefixed with either `http://` or `https://` or you will get a chain of redirects to a never-ending path on the source domain. It will be amusing but will not meet your goal.
+
 ### Parameters
 Parameters | Type | Description
 ---|:---:|---
@@ -80,6 +82,10 @@ While testing, you may need to delete a stack
 ```
 aws cloudformation delete-stack --stack-name Redirector
 ```
+
+# Configuring target domains for redirection
+
+In order to fully configure a target domain for redirection, first establish a `Redirector` API Gateway through the CloudFormation Stack as described above. Then add a [Custom Domain Mapping through the AWS Console](https://console.aws.amazon.com/apigateway/home#/custom-domain-names). You can add a Custom Domain Name through the console, give it a DNS name, tell it to use an _Edge Optimized_ endpoint configuration, and give it a valid ACM certificate for the domain you are targeting. This can be a wildcard certificate, which might make things simpler for you if you are configuring multiple domains. Then Edit the custom domain name and do an _Add mapping_ operation to add a Base Path Mapping to map `/` to the `Redirector` Prod stage.
 
 # Caveat:
 Since we are using AWS SAM, we are going to run into [bug #191](https://github.com/awslabs/serverless-application-model/issues/191). If you look at the Stages in your API Gateway, you're going to see a stage named `Stage`. Hopefully this bug is fixed soon.
