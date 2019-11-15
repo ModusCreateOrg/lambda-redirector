@@ -41,7 +41,7 @@ Resources:
     Properties:
       Description: "Handles everything except GET requests."
       Handler: any.handler
-      Runtime: nodejs6.10
+      Runtime: nodejs10.x
       CodeUri: ./lambda
       Environment:
         Variables:
