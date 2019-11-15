@@ -58,3 +58,15 @@ Resources:
           Properties:
             Path: /
             Method: any
+Outputs:
+    apiGatewayConsoleDashboardUrl:
+        Value: !Sub " https://console.aws.amazon.com/apigateway/home?region=${AWS::Region}#/apis/${ServerlessRestApi}/dashboard"
+
+    redirectorInvokeUrl:
+        Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/"
+
+    anyFunctionArn:
+        Value: !GetAtt "AnyFunction.Arn"
+    getFunctionArn:
+        Value: !GetAtt "GetFunction.Arn"
+    
