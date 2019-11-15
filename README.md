@@ -87,8 +87,11 @@ aws cloudformation delete-stack --stack-name Redirector
 
 In order to fully configure a target domain for redirection, first establish a `Redirector` API Gateway through the CloudFormation Stack as described above. Then add a [Custom Domain Mapping through the AWS Console](https://console.aws.amazon.com/apigateway/home#/custom-domain-names). You can add a Custom Domain Name through the console, give it a DNS name, tell it to use an _Edge Optimized_ endpoint configuration, and give it a valid ACM certificate for the domain you are targeting. This can be a wildcard certificate, which might make things simpler for you if you are configuring multiple domains. Then Edit the custom domain name and do an _Add mapping_ operation to add a Base Path Mapping to map `/` to the `Redirector` Prod stage.
 
+Once this is configured, look for the _Target Domain Name_ under the Custom Domain Name / Endpoint Configuration in the console and chnage that to the DNS name you want to redirect _from_.
+
+
 # Caveat:
-Since we are using AWS SAM, we are going to run into [bug #191](https://github.com/awslabs/serverless-application-model/issues/191). If you look at the Stages in your API Gateway, you're going to see a stage named `Stage`. Hopefully this bug is fixed soon.
+The first version of this software had the same issue as SAM [bug #191](https://github.com/awslabs/serverless-application-model/issues/191). If you look at the Stages in your API Gateway, you may find a stage named `Stage`. As of 2019-11-15 this issue is resolved and new deployments of `lambda-redirector` should not have a `Stage` stage defined.
 
 # Contributing:
 See: http://www.contribution-guide.org/
