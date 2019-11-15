@@ -19,7 +19,7 @@ Resources:
     Properties:
       Description: "Handles GET requests."
       Handler: get.handler
-      Runtime: nodejs6.10
+      Runtime: nodejs10.x
       CodeUri: ./lambda
       Environment:
         Variables:
