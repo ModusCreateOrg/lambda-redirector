@@ -39,7 +39,7 @@ module.exports.assembleRequest = function (path, query) {
  */
 module.exports.assembleResponse = function (requestUri) {
     var location;
-    if (process.env.NEW_DOMAIN.includes("?")) {
+    if (process.env.NEW_DOMAIN.includes("?") || ! process.env.NEW_DOMAIN.endsWith("/") {
         location = process.env.NEW_DOMAIN;
     } else {
         location = process.env.NEW_DOMAIN + requestUri;

@@ -71,7 +71,7 @@ aws cloudformation deploy \
 
 *Note*: Ensure that NewDomain is prefixed with either `http://` or `https://` or you will get a chain of redirects to a never-ending path on the source domain. It will be amusing but will not meet your goal.
 
-*Note*: This redirector has a special feature where if you specify a query parameter in the NewDomain URL (e.g. `https://www.example.com/some/path?foo=bar") it will disregard the path and any query parameters passed in by the user and will redirect strictly to the NewDomain URL.
+*Note*: This redirector has a special feature where if you specify either a query parameter or a non-slash-terminated string in the NewDomain URL (e.g. ``https://www.example.com/snafu` or `https://www.example.com/some/path?foo=bar") it will disregard the path and any query parameters passed in by the user and will redirect strictly to the NewDomain URL.
 
 ### Parameters
 Parameters | Type | Description
