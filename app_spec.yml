@@ -1,6 +1,9 @@
 ---
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
+Globals:
+  Api:
+    OpenApiVersion: '3.0.2'
 Parameters:
   HTTPResponse:
     Type: Number
@@ -16,7 +19,7 @@ Resources:
     Properties:
       Description: "Handles GET requests."
       Handler: get.handler
-      Runtime: nodejs6.10
+      Runtime: nodejs10.x
       CodeUri: ./lambda
       Environment:
         Variables:
@@ -38,7 +41,7 @@ Resources:
     Properties:
       Description: "Handles everything except GET requests."
       Handler: any.handler
-      Runtime: nodejs6.10
+      Runtime: nodejs10.x
       CodeUri: ./lambda
       Environment:
         Variables:
@@ -55,3 +58,15 @@ Resources:
           Properties:
             Path: /
             Method: any
+Outputs:
+    apiGatewayConsoleDashboardUrl:
+        Value: !Sub " https://console.aws.amazon.com/apigateway/home?region=${AWS::Region}#/apis/${ServerlessRestApi}/dashboard"
+
+    redirectorInvokeUrl:
+        Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/"
+
+    anyFunctionArn:
+        Value: !GetAtt "AnyFunction.Arn"
+    getFunctionArn:
+        Value: !GetAtt "GetFunction.Arn"
+    
