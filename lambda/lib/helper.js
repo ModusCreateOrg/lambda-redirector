@@ -30,11 +30,20 @@ module.exports.assembleRequest = function (path, query) {
 /**
  * Assemble the response to send to API Gateway.
  * 
+ * NOTE: If the new domain includes a query string, discard the request URI and
+ * just use the explicit domain given.
+ *
  * @param  {string} requestUri The path and the query joined using `?`.
  * @return {json}              The response sent to API Gateway via the Lambda proxy integration.
  *                             See: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-simple-proxy-for-lambda-output-format
  */
 module.exports.assembleResponse = function (requestUri) {
+    var location;
+    if (process.env.NEW_DOMAIN.includes("?")) {
+        location = process.env.NEW_DOMAIN;
+    } else {
+        location = process.env.NEW_DOMAIN + requestUri;
+    }
     return {
         statusCode: process.env.HTTP_RESPONSE,
         headers: {
